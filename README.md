@@ -122,11 +122,16 @@ Copy any template to your project root as **`CLAUDE.md`** or **`CLAUDE.local.md`
 
 ## Installation
 
+### Option 1: Local install (recommended — instant updates)
+
+Clone or place the repo anywhere on your machine, then point Claude Code to it:
+
 ```bash
-# Add the marketplace source and enable the plugin
-claude config set extraKnownMarketplaces.prompt-optimizer '{"source":{"source":"github","repo":"cristianoaredes/claude-prompt-optimizer"}}'
+claude config set extraKnownMarketplaces.prompt-optimizer '{"source":{"source":"local","path":"/Users/cristianoaredes/Workspace/projects/claude-prompt-optimizer"}}'
 claude config set enabledPlugins.prompt-optimizer@prompt-optimizer true
 ```
+
+> Replace the path with wherever you cloned the repo.
 
 Or manually in `~/.claude/settings.json`:
 
@@ -134,7 +139,8 @@ Or manually in `~/.claude/settings.json`:
 {
   "extraKnownMarketplaces": {
     "prompt-optimizer": {
-      "source": { "source": "github", "repo": "cristianoaredes/claude-prompt-optimizer" }
+      "source": { "source": "local", "path": "/Users/cristianoaredes/Workspace/projects/claude-prompt-optimizer" },
+      "autoUpdate": true
     }
   },
   "enabledPlugins": {
@@ -142,6 +148,17 @@ Or manually in `~/.claude/settings.json`:
   }
 }
 ```
+
+### Option 2: GitHub install
+
+If you want to install directly from GitHub without cloning, you can use the raw GitHub source as a marketplace:
+
+```bash
+claude config set extraKnownMarketplaces.prompt-optimizer '{"source":{"source":"github","repo":"cristianoaredes/claude-prompt-optimizer"}}'
+claude config set enabledPlugins.prompt-optimizer@prompt-optimizer true
+```
+
+Note: Claude Code's GitHub marketplace resolver expects a plugin catalog/registry in some cases, so local install is more reliable for personal forks.
 
 ---
 
