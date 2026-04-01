@@ -28,46 +28,27 @@ for cmd in "$CACHE_DIR"/commands/*.md; do
   ln -s "$cmd" "$COMMANDS_DIR/$(basename "$cmd")"
 done
 
-# 4. Register in installed_plugins.json
+# 4. Clean up any old plugin registration that causes marketplace errors
 python3 <<PY
 import json, os
 
-path = os.path.expanduser("$INSTALLED_PLUGINS")
-with open(path, "r") as f:
-    data = json.load(f)
+# Remove from installed_plugins.json to avoid "not found in marketplace" errors
+inst_path = os.path.expanduser("$INSTALLED_PLUGINS")
+if os.path.exists(inst_path):
+    with open(inst_path, "r") as f:
+        data = json.load(f)
+    data.get("plugins", {}).pop("$PLUGIN_NAME@$PLUGIN_NAME", None)
+    with open(inst_path, "w") as f:
+        json.dump(data, f, indent=2)
 
-data.setdefault("plugins", {})["$PLUGIN_NAME@$PLUGIN_NAME"] = [
-    {
-        "scope": "user",
-        "installPath": "$CACHE_DIR",
-        "version": "$VERSION",
-        "installedAt": "2026-04-01T00:00:00.000Z",
-        "lastUpdated": "2026-04-01T00:00:00.000Z"
-    }
-]
-
-with open(path, "w") as f:
-    json.dump(data, f, indent=2)
-PY
-
-# 5. Enable in settings.json
-python3 <<PY
-import json, os
-
-path = os.path.expanduser("$SETTINGS")
-with open(path, "r") as f:
-    data = json.load(f)
-
-data.setdefault("enabledPlugins", {})["$PLUGIN_NAME@$PLUGIN_NAME"] = True
-
-# Remove any broken marketplace entries if they exist
-if "extraKnownMarketplaces" in data:
-    data["extraKnownMarketplaces"].pop("$PLUGIN_NAME", None)
-    if not data["extraKnownMarketplaces"]:
-        del data["extraKnownMarketplaces"]
-
-with open(path, "w") as f:
-    json.dump(data, f, indent=2)
+# Remove from settings.json enabledPlugins
+settings_path = os.path.expanduser("$SETTINGS")
+if os.path.exists(settings_path):
+    with open(settings_path, "r") as f:
+        data = json.load(f)
+    data.get("enabledPlugins", {}).pop("$PLUGIN_NAME@$PLUGIN_NAME", None)
+    with open(settings_path, "w") as f:
+        json.dump(data, f, indent=2)
 PY
 
 echo "✅ $PLUGIN_NAME v$VERSION installed successfully!"
@@ -76,8 +57,5 @@ echo "📝 Available commands:"
 echo "  /build /chain /debug /env /flags /inject /mode /pipeline"
 echo "  /refactor /sharpen /super /swarm /tune /verify /yolo"
 echo ""
-echo "🪝 Active hooks:"
-echo "  SessionStart + PostToolUse"
-echo ""
-echo "🔄 Restart Claude Code to load everything:"
+echo "🔄 Restart Claude Code to load commands:"
 echo "  exit && claude"

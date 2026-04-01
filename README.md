@@ -2,7 +2,7 @@
 
 > A power-user toolkit for Claude Code. Reverse-engineered from 494 environment variables and the actual system prompt architecture of the leaked source.
 
-This isn't a prompt rewriter. It's a **control layer** that exposes Claude Code's hidden knobs, injects session intelligence via hooks, ships battle-tested `CLAUDE.md` templates, and runs full agent-driven workflows.
+This isn't a prompt rewriter. It's a **control layer** that exposes Claude Code's hidden knobs, ships battle-tested `CLAUDE.md` templates, and runs full agent-driven workflows.
 
 ---
 
@@ -23,9 +23,18 @@ Rewrite vague prompts into the formula that Claude Code actually prefers:
 
 ---
 
-### 2. Hooks — Silent Session Intelligence
+### 2. Hooks — Session Intelligence (Optional)
 
-Two hooks that run automatically, derived from the actual Claude Code hook schema (`src/types/hooks.ts`):
+The repo includes two hook implementations derived from the actual Claude Code hook schema (`src/types/hooks.ts`). Because Claude Code validates marketplace membership for plugin-based hooks, they are **not registered automatically** during install — this avoids the "plugin not found in marketplace" error.
+
+If you want them active, copy them manually to your global hooks directory:
+
+```bash
+cp hooks/session-inject.py ~/.claude/hooks/prompt-optimizer-session-start.py
+chmod +x ~/.claude/hooks/prompt-optimizer-session-start.py
+cp hooks/post-tool-guard.py ~/.claude/hooks/prompt-optimizer-post-tool.py
+chmod +x ~/.claude/hooks/prompt-optimizer-post-tool.py
+```
 
 - **`SessionStart`** — Injects a reminder at the beginning of every session: be direct, be specific, use `/sharpen` when needed.
 - **`PostToolUse`** — Nudges the model after key actions:
@@ -138,10 +147,9 @@ exit && claude
 
 ### What the install script does
 
-1. Copies the plugin into `~/.claude/plugins/cache/prompt-optimizer/` (where Claude Code loads hooks from)
+1. Copies the plugin into `~/.claude/plugins/cache/prompt-optimizer/` (for reference and optional manual hook installation)
 2. Symlinks all commands to `~/.claude/.claude/commands/` (where Claude Code discovers slash commands)
-3. Registers the plugin in `~/.claude/plugins/installed_plugins.json`
-4. Enables it in `~/.claude/settings.json`
+3. Cleans up any old plugin registration in `installed_plugins.json` and `settings.json` to prevent marketplace validation errors
 
 ### Manual install
 
@@ -154,7 +162,7 @@ If you prefer to do it manually, see [`install.sh`](./install.sh) for the exact 
 ## Requirements
 
 - Claude Code with plugin support
-- Python 3.8+ (for the `SessionStart` and `PostToolUse` hooks)
+- Python 3.8+ (only if you manually install the optional hooks)
 
 ---
 
