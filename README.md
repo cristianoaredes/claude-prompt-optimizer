@@ -122,43 +122,32 @@ Copy any template to your project root as **`CLAUDE.md`** or **`CLAUDE.local.md`
 
 ## Installation
 
-### Option 1: Local install (recommended — instant updates)
-
-Clone or place the repo anywhere on your machine, then point Claude Code to it:
+Clone the repo and run the install script:
 
 ```bash
-claude config set extraKnownMarketplaces.prompt-optimizer '{"source":{"source":"local","path":"/Users/cristianoaredes/Workspace/projects/claude-prompt-optimizer"}}'
-claude config set enabledPlugins.prompt-optimizer@prompt-optimizer true
+git clone https://github.com/cristianoaredes/claude-prompt-optimizer.git
+cd claude-prompt-optimizer
+./install.sh
 ```
 
-> Replace the path with wherever you cloned the repo.
-
-Or manually in `~/.claude/settings.json`:
-
-```json
-{
-  "extraKnownMarketplaces": {
-    "prompt-optimizer": {
-      "source": { "source": "local", "path": "/Users/cristianoaredes/Workspace/projects/claude-prompt-optimizer" },
-      "autoUpdate": true
-    }
-  },
-  "enabledPlugins": {
-    "prompt-optimizer@prompt-optimizer": true
-  }
-}
-```
-
-### Option 2: GitHub install
-
-If you want to install directly from GitHub without cloning, you can use the raw GitHub source as a marketplace:
+Then **restart Claude Code**:
 
 ```bash
-claude config set extraKnownMarketplaces.prompt-optimizer '{"source":{"source":"github","repo":"cristianoaredes/claude-prompt-optimizer"}}'
-claude config set enabledPlugins.prompt-optimizer@prompt-optimizer true
+exit && claude
 ```
 
-Note: Claude Code's GitHub marketplace resolver expects a plugin catalog/registry in some cases, so local install is more reliable for personal forks.
+### What the install script does
+
+1. Copies the plugin into `~/.claude/plugins/cache/prompt-optimizer/` (where Claude Code loads hooks from)
+2. Symlinks all commands to `~/.claude/.claude/commands/` (where Claude Code discovers slash commands)
+3. Registers the plugin in `~/.claude/plugins/installed_plugins.json`
+4. Enables it in `~/.claude/settings.json`
+
+### Manual install
+
+If you prefer to do it manually, see [`install.sh`](./install.sh) for the exact steps.
+
+> **Note:** Claude Code's plugin system does **not** auto-discover commands from manually registered plugins. That's why the install script symlinks commands into the user commands directory — it's the only reliable way to make both hooks and commands work together.
 
 ---
 
