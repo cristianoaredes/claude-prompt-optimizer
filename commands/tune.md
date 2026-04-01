@@ -1,6 +1,6 @@
 ---
-name: tune
 description: Show or apply Claude Code performance tuning profiles (deep-work, speed, privacy, ci-pipeline, multi-agent, debug-session).
+argument-hint: "[profile]"
 ---
 
 # /tune — Claude Code Tuning Profiles
