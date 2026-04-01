@@ -1,0 +1,20 @@
+{
+  "name": "prompt-optimizer",
+  "version": "1.1.0",
+  "description": "Strips verbal filler, injects engineering standards, and provides performance tuning profiles for Claude Code — based on reverse-engineered internals.",
+  "author": {
+    "name": "Cristiano Aredes"
+  },
+  "homepage": "https://github.com/cristianoaredes/claude-prompt-optimizer",
+  "repository": "https://github.com/cristianoaredes/claude-prompt-optimizer",
+  "license": "MIT",
+  "keywords": [
+    "prompt-engineering",
+    "token-optimization",
+    "engineering-standards",
+    "security",
+    "productivity",
+    "tuning",
+    "performance"
+  ]
+}
