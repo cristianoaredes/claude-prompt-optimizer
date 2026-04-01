@@ -1,12 +1,23 @@
 {
   "hooks": {
-    "UserPromptSubmit": [
+    "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/prompt-optimizer.py\"",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/session-inject.py\"",
             "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/post-tool-guard.py\"",
+            "timeout": 3
           }
         ]
       }

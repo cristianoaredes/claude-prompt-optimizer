@@ -155,6 +155,73 @@ When something is going wrong and you need full visibility.
 
 ---
 
+## Profile: `api-hacker`
+
+For advanced users who want to manipulate API behavior. Use with caution.
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_EXTRA_BODY": "{}",
+    "CLAUDE_CODE_EXTRA_METADATA": "{}",
+    "ANTHROPIC_BETAS": "computer-use-2025-01,token-efficient-tools-2025-01",
+    "ENABLE_GROWTHBOOK_DEV": "1"
+  }
+}
+```
+
+**What each does:**
+- `EXTRA_BODY` — Injects arbitrary JSON into every API request body (default `{}`; customize as needed)
+- `EXTRA_METADATA` — Injects arbitrary metadata into API requests (default `{}`; customize as needed)
+- `ANTHROPIC_BETAS` — Activates custom beta headers
+- `ENABLE_GROWTHBOOK_DEV` — Uses the dev GrowthBook client, unlocking more experimental flags
+
+---
+
+## Profile: `safety-off`
+
+⚠️ **DANGEROUS — FOR TRUSTED/LOCAL ENVIRONMENTS ONLY**
+
+Disables safety checks to reduce friction. **Only use in fully isolated, air-gapped, or highly trusted environments.**
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_DISABLE_COMMAND_INJECTION_CHECK": "1",
+    "CLAUDE_CODE_TWO_STAGE_CLASSIFIER": "fast"
+  }
+}
+```
+
+**What each does:**
+- `DISABLE_COMMAND_INJECTION_CHECK` — Skips regex-based command injection safety in BashTool
+- `TWO_STAGE_CLASSIFIER=fast` — Speeds up (and weakens) the YOLO safety classifier
+
+---
+
+## Profile: `audit-mode`
+
+For debugging and reverse engineering Claude's internal decisions.
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_DUMP_AUTO_MODE": "1",
+    "CLAUDE_CODE_DEBUG_LOGS_DIR": "/tmp/claude-audit",
+    "OTEL_LOG_TOOL_DETAILS": "1",
+    "CLAUDE_CODE_VERIFY_PLAN": "true"
+  }
+}
+```
+
+**What each does:**
+- `DUMP_AUTO_MODE` — Saves every auto-mode decision to disk for later inspection
+- `DEBUG_LOGS_DIR` — Centralizes logs in `/tmp/claude-audit`
+- `OTEL_LOG_TOOL_DETAILS` — Captures every tool call with full telemetry
+- `VERIFY_PLAN=true` — Enables the VerifyPlanExecutionTool when the runtime allows it
+
+---
+
 ## Standalone Tuning Variables (use individually)
 
 ### Thinking & Reasoning
@@ -164,6 +231,8 @@ When something is going wrong and you need full visibility.
 | `CLAUDE_CODE_EFFORT_LEVEL` | `low` `medium` `high` `max` | Controls depth of reasoning |
 | `MAX_THINKING_TOKENS` | integer (default: 16384) | Token budget for internal reasoning |
 | `CLAUDE_CODE_DISABLE_THINKING` | `1` | Turns off thinking completely |
+| `CLAUDE_CODE_ALWAYS_ENABLE_EFFORT` | `1` | Always enable effort controls |
+| `FALLBACK_FOR_ALL_PRIMARY_MODELS` | `1` | Enables fallback for any primary model |
 
 ### Context Management
 
@@ -174,6 +243,44 @@ When something is going wrong and you need full visibility.
 | `BASH_MAX_OUTPUT_LENGTH` | integer | Truncate long bash outputs |
 | `CLAUDE_CODE_FILE_READ_MAX_OUTPUT_TOKENS` | integer | Max tokens for file reads |
 | `SCROLLBACK_BYTES` | integer | Terminal scrollback buffer size |
+| `CLAUDE_CODE_DISABLE_VIRTUAL_SCROLL` | `1` | Disable virtual scroll |
+
+### Output & UI
+
+| Variable | Values | Effect |
+|---|---|---|
+| `CLAUDE_CODE_STREAMLINED_OUTPUT` | `1` | Machine-friendly output format |
+| `CLAUDE_CODE_DISABLE_MOUSE` | `1` | Disable mouse support |
+| `CLAUDE_CODE_DISABLE_MOUSE_CLICKS` | `1` | Disable mouse clicks only |
+| `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` | `1` | Prevent terminal title updates |
+| `CLAUDE_CODE_NO_FLICKER` | `1` | Fullscreen anti-flicker mode |
+
+### API Manipulation
+
+| Variable | Values | Effect |
+|---|---|---|
+| `CLAUDE_CODE_EXTRA_BODY` | JSON string | Injects arbitrary JSON into every API request body |
+| `CLAUDE_CODE_EXTRA_METADATA` | JSON string | Injects arbitrary metadata into API requests |
+| `ANTHROPIC_BETAS` | comma-separated list | Custom beta headers |
+| `ENABLE_GROWTHBOOK_DEV` | `1` | Use dev GrowthBook client (more experimental flags) |
+
+### Safety & Verification
+
+| Variable | Values | Effect |
+|---|---|---|
+| `CLAUDE_CODE_DISABLE_COMMAND_INJECTION_CHECK` | `1` | Skips regex-based command injection safety in BashTool |
+| `CLAUDE_CODE_TWO_STAGE_CLASSIFIER` | `fast` `thinking` `true` | Controls YOLO safety classifier stages |
+| `CLAUDE_CODE_VERIFY_PLAN` | `true` | Enables VerifyPlanExecutionTool (runtime-gated) |
+
+### Debugging & Audit
+
+| Variable | Values | Effect |
+|---|---|---|
+| `CLAUDE_CODE_DUMP_AUTO_MODE` | `1` | Saves all auto-mode decisions to disk |
+| `CLAUDE_CODE_AUTO_MODE_MODEL` | model string | Overrides the model used for auto-mode classification |
+| `CLAUDE_CODE_DEBUG_LOGS_DIR` | path | Directory for debug logs |
+| `OTEL_LOG_TOOL_DETAILS` | `1` | Logs every tool invocation with full details |
+| `CLAUDE_DEBUG` | `1` | Enables verbose debug logging |
 
 ### MCP & Tools
 
@@ -191,6 +298,29 @@ When something is going wrong and you need full visibility.
 | `API_TIMEOUT_MS` | ms (default: 120000) | API call timeout |
 | `CLAUDE_CODE_MAX_RETRIES` | integer | Max retry attempts on failure |
 | `CLAUDE_STREAM_IDLE_TIMEOUT_MS` | ms | Timeout for idle streams |
+
+---
+
+## Feature Flags
+
+The `CLAUDE_INTERNAL_FC_OVERRIDES` environment variable accepts a JSON-stringified object of feature flag overrides.
+
+```json
+{
+  "env": {
+    "CLAUDE_INTERNAL_FC_OVERRIDES": "{\"tengu_thinkback\":true,\"tengu_scratch\":true}"
+  }
+}
+```
+
+Known working flags:
+
+| Flag | Effect |
+|---|---|
+| `tengu_thinkback` | Model re-reads outputs before acting |
+| `tengu_scratch` | Internal scratchpad for planning |
+| `tengu_tool_pear` | Parallel tool execution with dependency awareness |
+| `tengu_amber_flint` | Agent Teams kill switch |
 
 ---
 
