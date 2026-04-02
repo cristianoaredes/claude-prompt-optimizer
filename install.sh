@@ -2,7 +2,7 @@
 set -e
 
 PLUGIN_NAME="prompt-optimizer"
-VERSION="2.0.0"
+VERSION="2.1.0"
 CACHE_DIR="$HOME/.claude/plugins/cache/$PLUGIN_NAME/$PLUGIN_NAME/$VERSION"
 COMMANDS_DIR="$HOME/.claude/.claude/commands"
 INSTALLED_PLUGINS="$HOME/.claude/plugins/installed_plugins.json"
