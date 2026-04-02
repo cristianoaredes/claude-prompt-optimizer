@@ -28,9 +28,19 @@ def main():
             "Session reminder: be direct and specific. "
             "Use the /sharpen command if you want help optimizing a prompt."
         )
+        
+        trauma_context = ""
+        trauma_path = os.path.expanduser("~/.claude/global_traumas.md")
+        if os.path.exists(trauma_path):
+            with open(trauma_path, "r", encoding="utf-8") as f:
+                traumas = f.read().strip()
+                if traumas:
+                    trauma_context = f"\n\n🚨 USER PREFERENCES & PREVIOUS TRAUMAS TO AVOID:\n{traumas}\n"
+        
         additional_context = (
             f"Plugin '{plugin_name}' is active. "
             "It provides prompt-craft guidance, tuning profiles, and the /sharpen command."
+            f"{trauma_context}"
         )
 
         json.dump(
